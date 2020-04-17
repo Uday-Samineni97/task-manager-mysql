@@ -1,5 +1,6 @@
 const userModel =require("../models/userModel")
 
+const jwt=require('jsonwebtoken')
 
 exports.userRegister=async (req,res)=>{
  
@@ -8,7 +9,8 @@ exports.userRegister=async (req,res)=>{
             res.send(err)
         }
         else{
-            res.status(200).send("User registered successfully!!")
+            const token=jwt.sign({user_id:data[0].id},process.env.JWT_SECRET,{expiresIn:'24h'})
+            res.status(200).send({"message":"User registered successfully!!","token":token})
         }
     }) 
 }
@@ -21,7 +23,18 @@ exports.userLogin=async (req,res)=>{
             res.send(err)
         }
         else{
-            res.status(200).send("User loggedin Successfully!!")
+            res.status(200).send(result)
+        }
+    }) 
+}
+exports.userById=async (req,res)=>{
+ 
+    await userModel.getUser(req,(err,result)=>{
+        if(err){
+            res.send(err)
+        }
+        else{
+            res.status(200).send(result)
         }
     }) 
 }
