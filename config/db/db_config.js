@@ -1,6 +1,6 @@
 require('dotenv').config(); // include .env file
 
-var mysql = require('mysql');
+// var mysql = require('mysql');
 const connection_config = require('./connection');
 
 var db_config;
@@ -53,75 +53,84 @@ switch (process.env.NODE_ENV) {
 }
 
 //- Create the connection variable
-var connection = mysql.createPool(db_config);
+// var connection = mysql.createPool(db_config);
 
+// //-
+// //- Establish a new connection
+// //-
+// connection.getConnection(function (err) {
+//     if (err) {
+//         // mysqlErrorHandling(connection, err);
+//         console.log("Error",err)
+//         console.log("\n*** Cannot establish a connection with the database. ***");
+
+//         connection = reconnect(connection);
+//     } else {
+//         console.log("\n*** New connection established with the database. ***")
+//     }
+// });
+
+// //-
+// //- Reconnection function
+// //-
+// function reconnect(connection) {
+//     console.log("\n New connection tentative...");
+
+//     //- Create a new one
+//     connection = mysql.createPool(db_config);
+
+//     //- Try to reconnect
+//     connection.getConnection(function (err) {
+//         if (err) {
+//             //- Try to connect every 2 seconds.
+//             setTimeout(reconnect(connection), 2000);
+//         } else {
+//             console.log("\n*** New connection established with the database. ***")
+//             return connection;
+//         }
+//     });
+// }
+
+// //-
+// //- Error listener
 //-
-//- Establish a new connection
-//-
-connection.getConnection(function (err) {
-    if (err) {
-        // mysqlErrorHandling(connection, err);
-        console.log("\n*** Cannot establish a connection with the database. ***");
+// connection.on('error', function (err) {
 
-        connection = reconnect(connection);
-    } else {
-        console.log("\n*** New connection established with the database. ***")
-    }
-});
+//     //-
+//     //- The server close the connection.
+//     //-
+//     if (err.code === "PROTOCOL_CONNECTION_LOST") {
+//         console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+//         return reconnect(connection);
+//     }
 
-//-
-//- Reconnection function
-//-
-function reconnect(connection) {
-    console.log("\n New connection tentative...");
+//     else if (err.code === "PROTOCOL_ENQUEUE_AFTER_QUIT") {
+//         console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+//         return reconnect(connection);
+//     }
 
-    //- Create a new one
-    connection = mysql.createPool(db_config);
+//     else if (err.code === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR") {
+//         console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+//         return reconnect(connection);
+//     }
 
-    //- Try to reconnect
-    connection.getConnection(function (err) {
-        if (err) {
-            //- Try to connect every 2 seconds.
-            setTimeout(reconnect(connection), 2000);
-        } else {
-            console.log("\n*** New connection established with the database. ***")
-            return connection;
-        }
-    });
-}
+//     else if (err.code === "PROTOCOL_ENQUEUE_HANDSHAKE_TWICE") {
+//         console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+//     }
 
-//-
-//- Error listener
-//-
-connection.on('error', function (err) {
+//     else {
+//         console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
+//         return reconnect(connection);
+//     }
 
-    //-
-    //- The server close the connection.
-    //-
-    if (err.code === "PROTOCOL_CONNECTION_LOST") {
-        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
-        return reconnect(connection);
-    }
+// });
+const Pool = require('pg').Pool
+const pool = new Pool({
+  user: "nhebkurdiuzied",
+  host: "ec2-52-71-231-180.compute-1.amazonaws.com",
+  database: "d5dugvus11enbl",
+  password: "05592badb0c915367300974f39ccf6b1fc305a85e16bc8b833e932e2264d7b7c",
+  port: 5432,
+})
 
-    else if (err.code === "PROTOCOL_ENQUEUE_AFTER_QUIT") {
-        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
-        return reconnect(connection);
-    }
-
-    else if (err.code === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR") {
-        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
-        return reconnect(connection);
-    }
-
-    else if (err.code === "PROTOCOL_ENQUEUE_HANDSHAKE_TWICE") {
-        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
-    }
-
-    else {
-        console.log("/!\\ Cannot establish a connection with the database. /!\\ (" + err.code + ")");
-        return reconnect(connection);
-    }
-
-});
-
-module.exports = connection;
+module.exports = pool;

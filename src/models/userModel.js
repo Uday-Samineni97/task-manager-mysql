@@ -2,13 +2,15 @@ const bcrypt = require("bcrypt");
 const jwt=require('jsonwebtoken')
 require('dotenv').config();
 const database = require("../../config/db/db_config");
-
+console.log("Data",database)
 exports.register = (req, result) => {
+  console.log("Hi")
   database.query(
     "select * from user where email=?",
     [req.body.email],
     (error, data) => {
-      if (data.length > 0) {
+      
+      if ( data && data.length > 0) {
         result("Email already registered!! Please choose another email", null);
       } else {
         const salt = bcrypt.genSaltSync(10);
@@ -21,8 +23,9 @@ exports.register = (req, result) => {
             phone: req.body.phone
           }
         ];
-
+    
         database.query("INSERT into user set ?", insert_data, (error, data) => {
+          console.log("Hi1")
           if (error) {
             result(error, null);
           } else {
